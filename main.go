@@ -13,7 +13,7 @@ func main() {
 	var (
 		deploymentURL = os.Getenv("AXM_DEPLOYMENT_URL")
 		accessToken   = os.Getenv("AXM_ACCESS_TOKEN")
-		port          = flag.Int("port", 80, "an int")
+		port          = flag.Int("port", 3101, "an int")
 	)
 
 	client, err := axiom.NewClient(deploymentURL, accessToken)

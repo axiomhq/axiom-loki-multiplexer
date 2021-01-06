@@ -2,9 +2,9 @@ package http
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"net/http"
+	"sync"
 
 	"github.com/axiomhq/axiom-go/axiom"
 )
@@ -14,58 +14,60 @@ const (
 	datasetKey     = "_axiom_dataset"
 )
 
+type ingestFunc func(ctx context.Context, id string, opts axiom.IngestOptions, events ...axiom.Event) (*axiom.IngestStatus, error)
+
 // implements the http.Server interface
-type Server struct {
-	*http.Server
-	axiomClient *axiom.Client
+type PushHandler struct {
+	sync.Mutex
+	ingestFn ingestFunc
 }
 
-func NewServer(port int, client *axiom.Client) *Server {
-	srv := &Server{
-		Server: &http.Server{
-			Addr: fmt.Sprintf(":%d", port),
-		},
-		axiomClient: client,
+func NewPushHandler(client *axiom.Client) *PushHandler {
+	return &PushHandler{
+		ingestFn: client.Datasets.IngestEvents,
 	}
-	http.HandleFunc("/loki/api/v1/push", srv.push)
-	return srv
 }
 
-func (srv *Server) push(w http.ResponseWriter, r *http.Request) {
+func (push *PushHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	push.Lock()
+	defer push.Unlock()
+
 	req, err := decodePushRequest(r.Body)
+
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	var (
-		client  = srv.axiomClient
 		events  = make([]axiom.Event, 0)
 		dataset = defaultDataset
 	)
 
 	for _, stream := range req.Streams {
-		ev := make(axiom.Event)
 		labels := stream.Labels.Map()
 		if val, ok := labels[datasetKey]; ok {
 			dataset = val
 			delete(labels, datasetKey)
 		}
 
-		for k, v := range labels {
-			ev[k] = v
-		}
-
 		for _, val := range stream.Entries {
-			ev[axiom.TimestampField] = val
-			ev["message"] = val
+			ev := make(axiom.Event)
+			for k, v := range labels {
+				ev[k] = v
+			}
+			ev[axiom.TimestampField] = val.Timestamp
+			ev["message"] = val.Line
+			events = append(events, ev)
 		}
 
-		if res, err := client.Datasets.IngestEvents(context.Background(), dataset, axiom.IngestOptions{}, events...); err != nil {
+		if res, err := push.ingestFn(context.Background(), dataset, axiom.IngestOptions{}, events...); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			log.Fatalln(err)
 		} else {
 			log.Println(res)
 		}
+		events = make([]axiom.Event, 0)
+
 	}
 }
