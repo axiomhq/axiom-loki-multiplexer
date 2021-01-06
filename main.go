@@ -3,17 +3,18 @@ package main
 import (
 	"flag"
 	"log"
+	"net/http"
 	"os"
 
 	"github.com/axiomhq/axiom-go/axiom"
-	"github.com/axiomhq/axiom-loki-proxy/http"
+	httpProxy "github.com/axiomhq/axiom-loki-proxy/http"
 )
 
 func main() {
 	var (
 		deploymentURL = os.Getenv("AXM_DEPLOYMENT_URL")
 		accessToken   = os.Getenv("AXM_ACCESS_TOKEN")
-		port          = flag.Int("port", 3101, "an int")
+		addr          = flag.String("addr", ":3101", "a string <ip>:<port>")
 	)
 
 	client, err := axiom.NewClient(deploymentURL, accessToken)
@@ -21,8 +22,11 @@ func main() {
 		log.Fatal(err)
 	}
 
-	srv := http.NewServer(*port, client)
-	if err := srv.ListenAndServe(); err != nil {
-		log.Fatalln(err)
-	}
+	mux := http.NewServeMux()
+	handler := httpProxy.NewPushHandler(client)
+	mux.Handle("/", handler)
+
+	log.Printf("Now listening on %s...\n", *addr)
+	server := http.Server{Handler: mux, Addr: *addr}
+	log.Fatal(server.ListenAndServe())
 }
