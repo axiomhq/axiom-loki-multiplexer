@@ -2,44 +2,38 @@ package main
 
 import (
 	"context"
-	"flag"
 	"fmt"
 	"log"
-	"net/http"
+	"net"
 
-	"github.com/axiomhq/axiom-go/axiom"
-	httpProxy "github.com/axiomhq/axiom-loki-proxy/http"
+	pb "github.com/grafana/loki/pkg/logproto"
+	"google.golang.org/grpc"
 )
 
-func dummyIngest(ctx context.Context, id string, opts axiom.IngestOptions, events ...axiom.Event) (*axiom.IngestStatus, error) {
-	fmt.Println(events)
-	return nil, nil
-}
+const (
+	port = "0.0.0.0:3101"
+)
 
-func initHttpPushHandler(mux *http.ServeMux, client *axiom.Client) {
-	//handler := httpProxy.NewPushHandler(client)
-	handler := &httpProxy.PushHandler{
-		IngestFn: dummyIngest,
+// server is used to implement helloworld.GreeterServer.
+type server struct{}
+
+func (s *server) Push(ctx context.Context, in *pb.PushRequest) (*pb.PushResponse, error) {
+	fmt.Println(">>>")
+	for i, stream := range in.Streams {
+		fmt.Println(i, stream)
 	}
-	mux.Handle("/loki/api/v1/push", handler)
+	log.Printf("Received: %v", in.Streams)
+	return &pb.PushResponse{}, nil
 }
 
 func main() {
-	var (
-		//deploymentURL = os.Getenv("AXM_DEPLOYMENT_URL")
-		//accessToken   = os.Getenv("AXM_ACCESS_TOKEN")
-		addr = flag.String("addr", "0.0.0.0:3101", "a string <ip>:<port>")
-	)
-
-	//client, err := axiom.NewClient(deploymentURL, accessToken)
-	//if err != nil {
-	//	log.Fatal(err)
-	//}
-
-	mux := http.NewServeMux()
-	initHttpPushHandler(mux, nil)
-
-	log.Printf("Now listening on %s...\n", *addr)
-	server := http.Server{Handler: mux, Addr: *addr}
-	log.Fatal(server.ListenAndServe())
+	lis, err := net.Listen("tcp", port)
+	if err != nil {
+		log.Fatalf("failed to listen: %v", err)
+	}
+	s := grpc.NewServer()
+	pb.RegisterPusherServer(s, &server{})
+	if err := s.Serve(lis); err != nil {
+		log.Fatalf("failed to serve: %v", err)
+	}
 }

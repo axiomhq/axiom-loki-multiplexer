@@ -11,4 +11,6 @@ require (
 	github.com/prometheus/common v0.10.0
 	github.com/tj/assert v0.0.3
 	github.com/weaveworks/common v0.0.0-20201201095205-47e357f4e1ba // indirect
+	google.golang.org/grpc v1.31.0
+	google.golang.org/grpc/examples v0.0.0-20210105215357-f4a20d2f414f
 )
