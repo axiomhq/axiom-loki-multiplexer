@@ -2,7 +2,9 @@ package http
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
+	"io/ioutil"
 
 	"github.com/grafana/loki/pkg/loghttp"
 	"github.com/grafana/loki/pkg/logproto"
@@ -18,8 +20,12 @@ type pushRequest struct {
 }
 
 func decodePushRequest(b io.Reader) (*pushRequest, error) {
+
+	x, err := ioutil.ReadAll(b)
+	fmt.Println(string(x), err)
+
 	var request loghttp.PushRequest
-	if err := json.NewDecoder(b).Decode(&request); err != nil {
+	if err := json.NewDecoder(b).Decode(b); err != nil {
 		return nil, err
 	}
 	return newPushRequest(request), nil

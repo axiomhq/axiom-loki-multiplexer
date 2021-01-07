@@ -19,12 +19,12 @@ type ingestFunc func(ctx context.Context, id string, opts axiom.IngestOptions, e
 // implements the http.Server interface
 type PushHandler struct {
 	sync.Mutex
-	ingestFn ingestFunc
+	IngestFn ingestFunc
 }
 
 func NewPushHandler(client *axiom.Client) *PushHandler {
 	return &PushHandler{
-		ingestFn: client.Datasets.IngestEvents,
+		IngestFn: client.Datasets.IngestEvents,
 	}
 }
 
@@ -61,7 +61,7 @@ func (push *PushHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			events = append(events, ev)
 		}
 
-		if res, err := push.ingestFn(context.Background(), dataset, axiom.IngestOptions{}, events...); err != nil {
+		if res, err := push.IngestFn(context.Background(), dataset, axiom.IngestOptions{}, events...); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			log.Fatalln(err)
 		} else {
