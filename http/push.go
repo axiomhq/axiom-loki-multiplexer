@@ -2,6 +2,7 @@ package http
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"net/http"
 	"sync"
@@ -32,7 +33,20 @@ func (push *PushHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	push.Lock()
 	defer push.Unlock()
 
-	req, err := decodePushRequest(r.Body)
+	var (
+		req *pushRequest
+		err error
+	)
+
+	typ := r.Header.Get("Content-Type")
+	switch typ {
+	case "application/json":
+		req, err = decodeJsonPushRequest(r.Body)
+	case "application/x-protobuf":
+		req, err = decodeProtoPushRequest(r.Body)
+	default:
+		err = fmt.Errorf("unsupported Content-Type %v", typ)
+	}
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -61,13 +75,10 @@ func (push *PushHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			events = append(events, ev)
 		}
 
-		if res, err := push.ingestFn(context.Background(), dataset, axiom.IngestOptions{}, events...); err != nil {
+		if _, err := push.ingestFn(context.Background(), dataset, axiom.IngestOptions{}, events...); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			log.Fatalln(err)
-		} else {
-			log.Println(res)
 		}
 		events = make([]axiom.Event, 0)
-
 	}
 }
