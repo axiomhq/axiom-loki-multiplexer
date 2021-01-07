@@ -1,0 +1,69 @@
+project_name: axiom-loki-proxy
+
+builds:
+  - id: axiom-loki-proxy
+    goos:
+      - linux
+    goarch:
+      - amd64
+    binary: axiom-loki-proxy
+    main: ./cmd/axiom-loki-proxy
+    env:
+      - CGO_ENABLED=0
+    flags:
+      - -buildmode=exe
+      - -installsuffix=cgo
+      - -trimpath
+      - -tags="osusergo netgo static_build"
+    ldflags:
+      - -s -w -extldflags "-fno-PIC -static"
+      - -X github.com/axiomhq/axiom-loki-proxy/version.release={{ .Version }}
+      - -X github.com/axiomhq/axiom-loki-proxy/version.revision={{ .ShortCommit }}
+      - -X github.com/axiomhq/axiom-loki-proxy/version.buildDate={{ .CommitDate }}
+      - -X github.com/axiomhq/axiom-loki-proxy/version.buildUser=goreleaser
+    mod_timestamp: "{{ .CommitTimestamp }}"
+
+archives:
+  - id: axiom-loki-proxy
+    builds:
+      - axiom-loki-proxy
+    name_template: "{{ .ProjectName }}_{{ .Version }}"
+    wrap_in_directory: true
+    format: tar.gz
+    files:
+      - LICENSE
+      - README.md
+
+checksum:
+  name_template: checksums.txt
+
+snapshot:
+  name_template: "{{ .Tag }}-next"
+
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - "^docs:"
+      - "^test:"
+
+milestones:
+  - repo:
+      owner: axiomhq
+      name: axiom-loki-proxy
+    close: true
+    fail_on_error: false
+
+release:
+  github:
+    owner: axiomhq
+    name: axiom-loki-proxy
+  prerelease: auto
+  name_template: "Axiom Loki Proxy v{{ .Version }}"
+
+dockers:
+  - image_templates:
+      - "axiomhq/axiom-loki-proxy:{{ .Tag }}"
+      - "axiomhq/axiom-loki-proxy:v{{ .Major }}"
+      - "axiomhq/axiom-loki-proxy:v{{ .Major }}.{{ .Minor }}"
+      - "axiomhq/axiom-loki-proxy:latest"
