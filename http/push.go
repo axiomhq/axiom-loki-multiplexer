@@ -17,18 +17,21 @@ const (
 
 type ingestFunc func(ctx context.Context, id string, opts axiom.IngestOptions, events ...axiom.Event) (*axiom.IngestStatus, error)
 
-// implements the http.Server interface
+// PushHandler implements http.Handler.
 type PushHandler struct {
 	sync.Mutex
 	ingestFn ingestFunc
 }
 
+// NewPushHandler creates a new PushHandler which uses the passed Axiom client
+// to send logs to Axiom.
 func NewPushHandler(client *axiom.Client) *PushHandler {
 	return &PushHandler{
 		ingestFn: client.Datasets.IngestEvents,
 	}
 }
 
+// ServeHTTP implements http.Handler.
 func (push *PushHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	push.Lock()
 	defer push.Unlock()
@@ -41,7 +44,7 @@ func (push *PushHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	typ := r.Header.Get("Content-Type")
 	switch typ {
 	case "application/json":
-		req, err = decodeJsonPushRequest(r.Body)
+		req, err = decodeJSONPushRequest(r.Body)
 	case "application/x-protobuf":
 		req, err = decodeProtoPushRequest(r.Body)
 	default:

@@ -4,12 +4,12 @@ go 1.15
 
 require (
 	github.com/axiomhq/axiom-go v0.0.0-20201215212509-678033418d51
-	github.com/cortexproject/cortex v1.2.1-0.20200803161316-7014ff11ed70
-	github.com/go-kit/kit v0.10.0
 	github.com/golang/snappy v0.0.2
+	github.com/golangci/golangci-lint v1.33.0
+	github.com/goreleaser/goreleaser v0.149.0
 	github.com/grafana/loki v1.6.1
-	github.com/prometheus/common v0.10.0
-	github.com/tj/assert v0.0.3
-	github.com/weaveworks/common v0.0.0-20201201095205-47e357f4e1ba // indirect
-	google.golang.org/protobuf v1.24.0
+	github.com/stretchr/testify v1.6.1
+	gotest.tools/gotestsum v0.6.0
 )
+
+replace k8s.io/client-go => k8s.io/client-go v0.20.1
