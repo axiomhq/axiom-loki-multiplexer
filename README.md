@@ -64,9 +64,12 @@ docker run -p9386:9386/tcp --env-file=.env axiomqh/axiom-loki-proxy
 
 ## Contributing
 
-Feel free to submit PRs or to fill issues. Every kind of help is appreciated.
+Feel free to submit PRs or to fill issues. Every kind of help is appreciated. 
 
 Before committing, `make` should run without any issues.
+
+Kindly check our [Contributing](Contributing.md) guide on how to propose
+bugfixes and improvements, and submitting pull requests to the project.
 
 ## License
 
