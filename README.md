@@ -18,9 +18,9 @@
 
 ## Introduction
 
-_Axiom Loki Proxy_ ships logs to Axiom, using [Loki][1].
+_Axiom Loki Proxy_ ships logs to Axiom, using [Loki HTTP API][1].
 
-  [1]: https://github.com/grafana/loki
+  [1]: https://grafana.com/docs/loki/latest/api/#post-lokiapiv1push
 
 ## Installation
 
