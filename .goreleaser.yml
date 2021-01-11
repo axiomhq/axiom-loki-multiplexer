@@ -1,35 +1,67 @@
 project_name: axiom-loki-proxy
 
 builds:
-  - id: axiom-loki-proxy
-    goos:
-      - linux
-    goarch:
+  - <<: &build_defaults
+      binary: axiom-loki-proxy
+      main: ./cmd/axiom-loki-proxy
+      env:
+        - CGO_ENABLED=0
+      flags:
+        - -buildmode=exe
+        - -installsuffix=cgo
+        - -trimpath
+        - -tags="osusergo netgo static_build"
+      ldflags:
+        - -s -w -extldflags "-fno-PIC -static"
+        - -X github.com/axiomhq/cli/pkg/version.release={{ .Version }}
+        - -X github.com/axiomhq/cli/pkg/version.revision={{ .ShortCommit }}
+        - -X github.com/axiomhq/cli/pkg/version.buildDate={{ .CommitDate }}
+        - -X github.com/axiomhq/cli/pkg/version.buildUser=goreleaser
+      mod_timestamp: "{{ .CommitTimestamp }}"
+    id: darwin
+    goos: 
+      - darwin
+    goarch: 
       - amd64
-    binary: axiom-loki-proxy
-    main: ./cmd/axiom-loki-proxy
-    env:
-      - CGO_ENABLED=0
-    flags:
-      - -buildmode=exe
-      - -installsuffix=cgo
-      - -trimpath
-      - -tags="osusergo netgo static_build"
-    ldflags:
-      - -s -w -extldflags "-fno-PIC -static"
-      - -X github.com/axiomhq/axiom-loki-proxy/version.release={{ .Version }}
-      - -X github.com/axiomhq/axiom-loki-proxy/version.revision={{ .ShortCommit }}
-      - -X github.com/axiomhq/axiom-loki-proxy/version.buildDate={{ .CommitDate }}
-      - -X github.com/axiomhq/axiom-loki-proxy/version.buildUser=goreleaser
-    mod_timestamp: "{{ .CommitTimestamp }}"
+
+  - <<: *build_defaults
+    id: linux
+    goos: 
+      - linux
+    goarch: 
+      - 386
+      - amd64
+      - arm64
+    goarm: 
+      - 6
+      - 7
+
+  - <<: *build_defaults
+    id: windows
+    goos: 
+      - windows
+    goarch: 
+      - 386
+      - amd64
 
 archives:
-  - id: axiom-loki-proxy
+  - <<: &archive_defaults
+      name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}{{ if .Arm }}v{{ .Arm }}{{ end }}"
+    id: nix
     builds:
-      - axiom-loki-proxy
-    name_template: "{{ .ProjectName }}_{{ .Version }}"
+      - darwin
+      - linux
     wrap_in_directory: true
     format: tar.gz
+    files:
+      - LICENSE
+      - README.md
+  - <<: *archive_defaults
+    id: windows
+    builds:
+      - windows
+    wrap_in_directory: false
+    format: zip
     files:
       - LICENSE
       - README.md
