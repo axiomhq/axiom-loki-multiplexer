@@ -95,7 +95,7 @@ release:
 
 dockers:
   - image_templates:
-      - "axiomhq/axiom-loki-proxy:{{ .Tag }}"
-      - "axiomhq/axiom-loki-proxy:v{{ .Major }}"
-      - "axiomhq/axiom-loki-proxy:v{{ .Major }}.{{ .Minor }}"
+      - "axiomhq/axiom-loki-proxy:{{ .Major }}"
+      - "axiomhq/axiom-loki-proxy:{{ .Major }}.{{ .Minor }}"
+      - "axiomhq/axiom-loki-proxy:{{ .Major }}.{{ .Minor }}.{{ .Patch }}"
       - "axiomhq/axiom-loki-proxy:latest"
