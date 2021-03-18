@@ -7,9 +7,9 @@ import (
 	"os"
 
 	"github.com/axiomhq/axiom-go/axiom"
+	"github.com/axiomhq/pkg/version"
 
 	httpProxy "github.com/axiomhq/axiom-loki-proxy/http"
-	"github.com/axiomhq/axiom-loki-proxy/version"
 )
 
 var (
@@ -19,7 +19,7 @@ var (
 )
 
 func main() {
-	log.Print("starting axiom-loki-proxy version", version.Release())
+	log.Print("starting axiom-loki-proxy version ", version.Release())
 
 	flag.Parse()
 
