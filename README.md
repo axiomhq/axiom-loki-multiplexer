@@ -73,14 +73,14 @@ See [LICENSE](LICENSE) for more information.
 <!-- Badges -->
 
 [go_workflow]: https://github.com/axiomhq/axiom-loki-proxy/actions?query=workflow%3Ago
-[go_workflow_badge]: https://img.shields.io/github/workflow/status/axiomhq/axiom-loki-proxy/go?style=flat-square&dummy=unused
+[go_workflow_badge]: https://img.shields.io/github/workflow/status/axiomhq/axiom-loki-proxy/go?style=flat-square&ghcache=unused
 [coverage]: https://codecov.io/gh/axiomhq/axiom-loki-proxy
-[coverage_badge]: https://img.shields.io/codecov/c/github/axiomhq/axiom-loki-proxy.svg?style=flat-square&dummy=unused
+[coverage_badge]: https://img.shields.io/codecov/c/github/axiomhq/axiom-loki-proxy.svg?style=flat-square&ghcache=unused
 [report]: https://goreportcard.com/report/github.com/axiomhq/axiom-loki-proxy
-[report_badge]: https://goreportcard.com/badge/github.com/axiomhq/axiom-loki-proxy?style=flat-square&dummy=unused
+[report_badge]: https://goreportcard.com/badge/github.com/axiomhq/axiom-loki-proxy?style=flat-square&ghcache=unused
 [release]: https://github.com/axiomhq/axiom-loki-proxy/releases/latest
-[release_badge]: https://img.shields.io/github/release/axiomhq/axiom-loki-proxy.svg?style=flat-square&dummy=unused
+[release_badge]: https://img.shields.io/github/release/axiomhq/axiom-loki-proxy.svg?style=flat-square&ghcache=unused
 [license]: https://opensource.org/licenses/MIT
-[license_badge]: https://img.shields.io/github/license/axiomhq/axiom-loki-proxy.svg?color=blue&style=flat-square&dummy=unused
+[license_badge]: https://img.shields.io/github/license/axiomhq/axiom-loki-proxy.svg?color=blue&style=flat-square&ghcache=unused
 [docker]: https://hub.docker.com/r/axiomhq/axiom-loki-proxy
-[docker_badge]: https://img.shields.io/docker/pulls/axiomhq/axiom-loki-proxy.svg
+[docker_badge]: https://img.shields.io/docker/pulls/axiomhq/axiom-loki-proxy.svg?style=flat-square&ghcache=unused
