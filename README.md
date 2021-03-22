@@ -32,15 +32,11 @@ Binary releases are available on [GitHub Releases][2].
 
 ### Install from source
 
-This project uses native [go mod][3] support.
-
 ```shell
 $ git clone https://github.com/axiomhq/axiom-loki-proxy.git
 $ cd axiom-loki-proxy
-$ make build # Puts archive into ./dist/
+$ make build
 ```
-
-  [3]: https://golang.org/cmd/go/#hdr-Module_maintenance
 
 ### Run the Docker image
 
