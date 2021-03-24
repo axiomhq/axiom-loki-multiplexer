@@ -104,9 +104,25 @@ release:
   prerelease: auto
   name_template: "Axiom Loki Proxy v{{ .Version }}"
 
+brews:
+  - name: axiom-loki-proxy
+    description: Loki powered log ingestion by proxy for Axiom
+    homepage: https://axiom.co
+    license: MIT
+    tap:
+      owner: axiomhq
+      name: homebrew-tap
+      token: "{{ .Env.HOMEBREW_TOKEN }}"
+    commit_author:
+      name: axiom-automation
+      email: hello@axiom.co
+    skip_upload: auto
+    folder: Formula
+    install: bin.install "{{ .ProjectName }}"
+
 dockers:
   - image_templates:
-      - "axiomhq/axiom-loki-proxy:{{ .Major }}"
-      - "axiomhq/axiom-loki-proxy:{{ .Major }}.{{ .Minor }}"
-      - "axiomhq/axiom-loki-proxy:{{ .Major }}.{{ .Minor }}.{{ .Patch }}"
-      - "axiomhq/axiom-loki-proxy:latest"
+    - "axiomhq/axiom-loki-proxy:{{ .Major }}"
+    - "axiomhq/axiom-loki-proxy:{{ .Major }}.{{ .Minor }}"
+    - "axiomhq/axiom-loki-proxy:{{ .Major }}.{{ .Minor }}.{{ .Patch }}"
+    - "axiomhq/axiom-loki-proxy:latest"
