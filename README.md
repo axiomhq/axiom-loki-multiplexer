@@ -30,6 +30,26 @@ Binary releases are available on [GitHub Releases][2].
 
   [2]: https://github.com/axiomhq/axiom-loki-proxy/releases/latest
 
+### Install using [Homebrew](https://brew.sh)
+
+```shell
+$ brew tap axiomhq/tap
+$ brew install axiom-loki-proxy
+```
+
+To update:
+
+```shell
+$ brew update
+$ brew upgrade axiom-loki-proxy
+```
+
+### Install using `go get`
+
+```shell
+$ go get -u github.com/axiomhq/axiom-loki-proxy/cmd/axiom-loki-proxy
+```
+
 ### Install from source
 
 ```shell
