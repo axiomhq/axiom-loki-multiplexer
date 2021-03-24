@@ -65,13 +65,20 @@ Docker images are available on [DockerHub][docker].
 ## Usage
 
 1. Set the following environment variables:
-   * `AXIOM_DEPLOYMENT_URL`: URL of the Axiom deployment to use
-   * `AXIOM_ACCESS_TOKEN`: **Personal Access** or **Ingest** token. Can be
-     created under `Profile` or `Settings > Ingest Tokens`. For security reasons
-     it is advised to use an Ingest Token with minimal privileges only.
+
+* `AXIOM_DEPLOYMENT_URL`: URL of the Axiom deployment to use
+* `AXIOM_ACCESS_TOKEN`: **Personal Access** or **Ingest** token. Can be
+created under `Profile` or `Settings > Ingest Tokens`. For security reasons
+it is advised to use an Ingest Token with minimal privileges only.
 
 2. Run it: `./axiom-loki-proxy` or using docker:
-   `docker run -p3101:3101/tcp axiomhq/axiom-loki-proxy`
+
+```shell
+$ docker run -p3101:3101/tcp \
+  -e=AXIOM_DEPLOYMENT_URL=<AXIOM_DEPLOYMENT_URL> \
+  -e=AXIOM_ACCESS_TOKEN=<AXIOM_ACCESS_TOKEN> \
+  axiomhq/axiom-loki-proxy
+```
 
 ## Contributing
 

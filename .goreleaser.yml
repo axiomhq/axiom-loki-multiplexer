@@ -40,8 +40,9 @@ builds:
     goos:
       - linux
     goarch:
-      - 386
+      - amd64 # We need a non-pie build for Docker Images
       - arm
+      - 386
     goarm:
       - 6
       - 7
@@ -51,8 +52,8 @@ builds:
     goos:
       - windows
     goarch:
-      - 386
       - amd64
+      - 386
 
 archives:
   - <<: &archive_defaults
@@ -121,8 +122,10 @@ brews:
     install: bin.install "{{ .ProjectName }}"
 
 dockers:
-  - image_templates:
-    - "axiomhq/axiom-loki-proxy:{{ .Major }}"
-    - "axiomhq/axiom-loki-proxy:{{ .Major }}.{{ .Minor }}"
-    - "axiomhq/axiom-loki-proxy:{{ .Major }}.{{ .Minor }}.{{ .Patch }}"
-    - "axiomhq/axiom-loki-proxy:latest"
+  - ids:
+      - linux-no-pie
+    image_templates:
+      - "axiomhq/axiom-loki-proxy:{{ .Major }}"
+      - "axiomhq/axiom-loki-proxy:{{ .Major }}.{{ .Minor }}"
+      - "axiomhq/axiom-loki-proxy:{{ .Major }}.{{ .Minor }}.{{ .Patch }}"
+      - "axiomhq/axiom-loki-proxy:latest"
