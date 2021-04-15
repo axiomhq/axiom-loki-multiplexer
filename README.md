@@ -55,7 +55,7 @@ $ go get -u github.com/axiomhq/axiom-loki-proxy/cmd/axiom-loki-proxy
 ```shell
 $ git clone https://github.com/axiomhq/axiom-loki-proxy.git
 $ cd axiom-loki-proxy
-$ make build
+$ make install
 ```
 
 ### Run the Docker image
