@@ -33,29 +33,29 @@ Binary releases are available on [GitHub Releases][2].
 ### Install using [Homebrew](https://brew.sh)
 
 ```shell
- brew tap axiomhq/tap
- brew install axiom-loki-proxy
+brew tap axiomhq/tap
+brew install axiom-loki-proxy
 ```
 
 To update:
 
 ```shell
- brew update
- brew upgrade axiom-loki-proxy
+brew update
+brew upgrade axiom-loki-proxy
 ```
 
 ### Install using `go get`
 
 ```shell
- go get -u github.com/axiomhq/axiom-loki-proxy/cmd/axiom-loki-proxy
+go get -u github.com/axiomhq/axiom-loki-proxy/cmd/axiom-loki-proxy
 ```
 
 ### Install from source
 
 ```shell
- git clone https://github.com/axiomhq/axiom-loki-proxy.git
- cd axiom-loki-proxy
- make install
+git clone https://github.com/axiomhq/axiom-loki-proxy.git
+cd axiom-loki-proxy
+make install
 ```
 
 ### Run the Docker image
@@ -68,13 +68,13 @@ Docker images are available on [DockerHub][docker].
 
 * `AXIOM_DEPLOYMENT_URL`: URL of the Axiom deployment to use
 * `AXIOM_ACCESS_TOKEN`: **Personal Access** or **Ingest** token. Can be
-created under `Profile` or `Settings > Ingest Tokens`. For security reasons
-it is advised to use an Ingest Token with minimal privileges only.
+created under `Profile` or `Settings > Ingest Tokens`. For security reasons it
+is advised to use an Ingest Token with minimal privileges only.
 
 2. Run it: `./axiom-loki-proxy` or using docker:
 
 ```shell
- docker run -p3101:3101/tcp \
+docker run -p3101:3101/tcp \
   -e=AXIOM_DEPLOYMENT_URL=<AXIOM_DEPLOYMENT_URL> \
   -e=AXIOM_ACCESS_TOKEN=<AXIOM_ACCESS_TOKEN> \
   axiomhq/axiom-loki-proxy
