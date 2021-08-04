@@ -14,7 +14,7 @@ COPY axiom-loki-proxy /usr/bin/axiom-loki-proxy
 WORKDIR /axiom-loki-proxy
 
 # Expose the default application port.
-EXPOSE 3101/tcp
+EXPOSE 8080/tcp
 
 # Set the binary as entrypoint.
 ENTRYPOINT [ "/usr/bin/axiom-loki-proxy" ]

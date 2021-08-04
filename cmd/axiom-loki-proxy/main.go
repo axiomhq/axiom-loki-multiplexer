@@ -13,9 +13,9 @@ import (
 )
 
 var (
-	deploymentURL = os.Getenv("AXIOM_DEPLOYMENT_URL")
-	accessToken   = os.Getenv("AXIOM_ACCESS_TOKEN")
-	addr          = flag.String("addr", ":3101", "Listen address <ip>:<port>")
+	deploymentURL = os.Getenv("AXIOM_URL")
+	accessToken   = os.Getenv("AXIOM_TOKEN")
+	addr          = flag.String("addr", ":8080", "Listen address <ip>:<port>")
 )
 
 func main() {
@@ -24,10 +24,10 @@ func main() {
 	flag.Parse()
 
 	if deploymentURL == "" {
-		log.Fatal("missing AXIOM_DEPLOYMENT_URL")
+		deploymentURL = axiom.CloudURL
 	}
 	if accessToken == "" {
-		log.Fatal("missing AXIOM_ACCESS_TOKEN")
+		log.Fatal("missing AXIOM_TOKEN")
 	}
 
 	client, err := axiom.NewClient(deploymentURL, accessToken)
