@@ -3,86 +3,60 @@ package main
 import (
 	"context"
 	"flag"
-	"log"
-	"net/http"
-	"os"
-	"os/signal"
-	"syscall"
-	"time"
+	stdHttp "net/http"
 
 	"github.com/axiomhq/axiom-go/axiom"
-	xhttp "github.com/axiomhq/pkg/http"
-	"github.com/axiomhq/pkg/version"
+	"github.com/axiomhq/pkg/cmd"
+	"github.com/axiomhq/pkg/http"
+	"go.uber.org/zap"
 
 	httpProxy "github.com/axiomhq/axiom-loki-proxy/http"
-)
-
-const (
-	exitOK int = iota
-	exitConfig
-	exitInternal
 )
 
 var addr = flag.String("addr", ":8080", "Listen address <ip>:<port>")
 
 func main() {
-	os.Exit(Main())
+	cmd.Run("axiom-loki-proxy", run,
+		cmd.WithValidateAxiomCredentials(),
+	)
 }
 
-func Main() int {
-	// Export `AXIOM_TOKEN` and `AXIOM_ORG_ID` for Axiom Cloud
-	// Export `AXIOM_URL` and `AXIOM_TOKEN` for Axiom Selfhost
-
-	log.Print("starting axiom-loki-proxy version ", version.Release())
+func run(ctx context.Context, log *zap.Logger, client *axiom.Client) error {
+	// Export `AXIOM_TOKEN` and `AXIOM_ORG_ID` for Axiom Cloud.
+	// Export `AXIOM_URL` and `AXIOM_TOKEN` for Axiom Selfhost.
 
 	flag.Parse()
 
-	ctx, cancel := signal.NotifyContext(context.Background(),
-		os.Interrupt,
-		os.Kill,
-		syscall.SIGHUP,
-		syscall.SIGINT,
-		syscall.SIGQUIT,
-	)
-	defer cancel()
-
-	client, err := axiom.NewClient()
-	if err != nil {
-		log.Print(err)
-		return exitConfig
-	} else if err = client.ValidateCredentials(ctx); err != nil {
-		log.Print(err)
-		return exitConfig
-	}
-
-	mux := http.NewServeMux()
+	mux := stdHttp.NewServeMux()
 	mux.Handle("/loki/api/v1/push", httpProxy.NewPushHandler(client))
 
-	srv, err := xhttp.NewServer(*addr, mux)
+	srv, err := http.NewServer(*addr, mux,
+		http.WithBaseContext(ctx),
+		http.WithLogger(log),
+	)
 	if err != nil {
-		log.Print(err)
-		return exitInternal
+		return cmd.Error("create http server", err)
 	}
 	defer func() {
-		shutdownCtx, shutdownCancel := context.WithTimeout(context.Background(), time.Second*5)
-		defer shutdownCancel()
-
-		if shutdownErr := srv.Shutdown(shutdownCtx); shutdownErr != nil {
-			log.Print(shutdownErr)
+		if shutdownErr := srv.Shutdown(); shutdownErr != nil {
+			log.Error("stopping server", zap.Error(shutdownErr))
+			return
 		}
 	}()
 
 	srv.Run(ctx)
 
-	log.Print("listening on ", srv.ListenAddr().String())
+	log.Info("server listening",
+		zap.String("address", srv.ListenAddr().String()),
+		zap.String("network", srv.ListenAddr().Network()),
+	)
 
 	select {
 	case <-ctx.Done():
-		log.Print("received interrupt, exiting gracefully")
+		log.Warn("received interrupt, exiting gracefully")
 	case err := <-srv.ListenError():
-		log.Print("error starting http server, exiting gracefully: ", err)
-		return exitInternal
+		return cmd.Error("error starting http server, exiting gracefully", err)
 	}
 
-	return exitOK
+	return nil
 }
