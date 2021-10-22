@@ -9,7 +9,6 @@ import (
 	"github.com/golang/snappy"
 	"github.com/grafana/loki/pkg/loghttp"
 	"github.com/grafana/loki/pkg/logproto"
-	pb "github.com/grafana/loki/pkg/logproto"
 )
 
 type stream struct {
@@ -34,7 +33,7 @@ func convertLabelsString(str string) (map[string]string, error) {
 }
 
 func decodeProtoPushRequest(r io.Reader) (*pushRequest, error) {
-	var req pb.PushRequest
+	var req logproto.PushRequest
 
 	b, err := ioutil.ReadAll(r)
 	if err != nil {
@@ -86,12 +85,12 @@ func decodeJsonPushRequest(b io.Reader) (*pushRequest, error) {
 
 func newStream(s *loghttp.Stream) stream {
 	ret := stream{
-		Entries: make([]pb.Entry, len(s.Entries)),
+		Entries: make([]logproto.Entry, len(s.Entries)),
 		Labels:  s.Labels,
 	}
 
 	for i, e := range s.Entries {
-		ret.Entries[i] = pb.Entry{
+		ret.Entries[i] = logproto.Entry{
 			Timestamp: e.Timestamp,
 			Line:      e.Line,
 		}
