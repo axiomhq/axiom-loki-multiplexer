@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"flag"
-	stdHttp "net/http"
 
 	"github.com/axiomhq/axiom-go/axiom"
 	"github.com/axiomhq/pkg/cmd"
@@ -13,7 +12,13 @@ import (
 	httpProxy "github.com/axiomhq/axiom-loki-proxy/http"
 )
 
-var addr = flag.String("addr", ":8080", "Listen address <ip>:<port>")
+var (
+	addr           = flag.String("addr", ":8080", "Listen address <ip>:<port>")
+	lokiURL        = flag.String("loki-url", "http://localhost:3100", "Loki URL")
+	byPassLoki     = flag.Bool("bypass", false, "Bypass Loki")
+	defaultDataset = flag.String("default-dataset", "axiom-loki-proxy", "Default dataset")
+	datasetKey     = flag.String("dataset-key", "_axiom_dataset_key", "Dataset key")
+)
 
 func main() {
 	cmd.Run("axiom-loki-proxy", run,
@@ -27,10 +32,17 @@ func run(ctx context.Context, log *zap.Logger, client *axiom.Client) error {
 
 	flag.Parse()
 
-	mux := stdHttp.NewServeMux()
-	mux.Handle("/loki/api/v1/push", httpProxy.NewPushHandler(client))
+	url := ""
+	if !*byPassLoki {
+		url = *lokiURL
+	}
 
-	srv, err := http.NewServer(*addr, mux,
+	mp, err := httpProxy.NewMultiplexer(client.Datasets.IngestEvents, url, *defaultDataset, *datasetKey)
+	if err != nil {
+		return cmd.Error("create multiplexer", err)
+	}
+
+	srv, err := http.NewServer(*addr, mp,
 		http.WithBaseContext(ctx),
 		http.WithLogger(log),
 	)

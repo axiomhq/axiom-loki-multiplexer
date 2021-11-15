@@ -36,8 +36,10 @@ var sampleStreams = map[string]interface{}{
 }
 
 func TestMyHandler(t *testing.T) {
-	push := &PushHandler{
-		ingestFn: sampleIngest,
+	push := &Multiplexer{
+		defaultDataset: "dummy",
+		datasetKey:     "key",
+		ingestFn:       sampleIngest,
 	}
 
 	server := httptest.NewServer(push)
