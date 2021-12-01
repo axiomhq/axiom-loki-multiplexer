@@ -9,19 +9,19 @@ import (
 	"github.com/axiomhq/pkg/http"
 	"go.uber.org/zap"
 
-	httpProxy "github.com/axiomhq/axiom-loki-proxy/http"
+	httpmultiplexer "github.com/axiomhq/axiom-loki-multiplexer/http"
 )
 
 var (
 	addr           = flag.String("addr", ":8080", "Listen address <ip>:<port>")
 	lokiURL        = flag.String("loki-url", "http://localhost:3100", "Loki URL")
 	byPassLoki     = flag.Bool("bypass", false, "Bypass Loki")
-	defaultDataset = flag.String("default-dataset", "axiom-loki-proxy", "Default dataset")
+	defaultDataset = flag.String("default-dataset", "axiom-loki-multiplexer", "Default dataset")
 	datasetKey     = flag.String("dataset-key", "_axiom_dataset_key", "Dataset key")
 )
 
 func main() {
-	cmd.Run("axiom-loki-proxy", run,
+	cmd.Run("axiom-loki-multiplexer", run,
 		cmd.WithValidateAxiomCredentials(),
 	)
 }
@@ -37,7 +37,7 @@ func run(ctx context.Context, log *zap.Logger, client *axiom.Client) error {
 		url = *lokiURL
 	}
 
-	mp, err := httpProxy.NewMultiplexer(client.Datasets.IngestEvents, url, *defaultDataset, *datasetKey)
+	mp, err := httpmultiplexer.NewMultiplexer(client.Datasets.IngestEvents, url, *defaultDataset, *datasetKey)
 	if err != nil {
 		return cmd.Error("create multiplexer", err)
 	}

@@ -34,8 +34,8 @@ func init() {
 }
 
 type lokiServer struct {
-	proxy *httputil.ReverseProxy
-	URL   *url.URL
+	multiplexer *httputil.ReverseProxy
+	URL         *url.URL
 }
 
 func (lk *lokiServer) Host() string {
@@ -64,8 +64,8 @@ func NewMultiplexer(ingestFn ingestFunc, lokiEndpoint, defaultDataset, datasetKe
 		if err != nil {
 			return nil, err
 		}
-		proxy := httputil.NewSingleHostReverseProxy(hcURL)
-		lk = &lokiServer{proxy: proxy, URL: hcURL}
+		multiplexer := httputil.NewSingleHostReverseProxy(hcURL)
+		lk = &lokiServer{multiplexer: multiplexer, URL: hcURL}
 	}
 	return &Multiplexer{
 		ingestFn:       ingestFn,
@@ -102,7 +102,7 @@ func (m *Multiplexer) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
 func (m *Multiplexer) forward(resp http.ResponseWriter, req *http.Request) {
 	req.URL.Host = m.lokiServer.Host()
 	req.URL.Scheme = m.lokiServer.Scheme()
-	m.lokiServer.proxy.ServeHTTP(resp, req)
+	m.lokiServer.multiplexer.ServeHTTP(resp, req)
 }
 
 func (m *Multiplexer) multiplex(req *http.Request) error {

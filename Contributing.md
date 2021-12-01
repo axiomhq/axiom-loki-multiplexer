@@ -4,17 +4,17 @@ This project accepts contributions. In order to contribute, you should pay atten
 
 ## Reporting Issues 
 
-Bugs, feature requests, and development-related questions should be directed to our [GitHub issue tracker](https://github.com/axiomhq/axiom-loki-proxy/issues) 
+Bugs, feature requests, and development-related questions should be directed to our [GitHub issue tracker](https://github.com/axiomhq/axiom-loki-multiplexer/issues) 
 
  When reporting a bug, please try and provide as much context as possible such as your operating system, Go version, and anything else that might be relevant to the bug. For feature requests, please explain what you're trying to do, and how the requested feature would help you do that.
  
  ## Setup
 
- [Fork](https://github.com/axiomhq/axiom-loki-proxy.git), then clone this repository:
+ [Fork](https://github.com/axiomhq/axiom-loki-multiplexer.git), then clone this repository:
 
  ```
-$ git clone https://github.com/axiomhq/axiom-loki-proxy.git
-$ cd axiom-loki-proxy
+$ git clone https://github.com/axiomhq/axiom-loki-multiplexer.git
+$ cd axiom-loki-multiplexer
 $ make 
 ```
 

@@ -1,9 +1,9 @@
-project_name: axiom-loki-proxy
+project_name: axiom-loki-multiplexer
 
 builds:
   - <<: &build_defaults
-      binary: axiom-loki-proxy
-      main: ./cmd/axiom-loki-proxy
+      binary: axiom-loki-multiplexer
+      main: ./cmd/axiom-loki-multiplexer
       env:
         - CGO_ENABLED=0
       flags:
@@ -108,20 +108,20 @@ changelog:
 milestones:
   - repo:
       owner: axiomhq
-      name: axiom-loki-proxy
+      name: axiom-loki-multiplexer
     close: true
     fail_on_error: false
 
 release:
   github:
     owner: axiomhq
-    name: axiom-loki-proxy
+    name: axiom-loki-multiplexer
   prerelease: auto
-  name_template: "Axiom Loki Proxy v{{ .Version }}"
+  name_template: "Axiom Loki multiplexer v{{ .Version }}"
 
 brews:
-  - name: axiom-loki-proxy
-    description: Loki powered log ingestion by proxy for Axiom
+  - name: axiom-loki-multiplexer
+    description: Loki powered log ingestion by multiplexer for Axiom
     homepage: https://axiom.co
     license: MIT
     tap:
@@ -140,7 +140,7 @@ dockers:
   - ids:
       - docker
     image_templates:
-      - "axiomhq/axiom-loki-proxy:{{ .Major }}"
-      - "axiomhq/axiom-loki-proxy:{{ .Major }}.{{ .Minor }}"
-      - "axiomhq/axiom-loki-proxy:{{ .Major }}.{{ .Minor }}.{{ .Patch }}"
-      - "axiomhq/axiom-loki-proxy:latest"
+      - "axiomhq/axiom-loki-multiplexer:{{ .Major }}"
+      - "axiomhq/axiom-loki-multiplexer:{{ .Major }}.{{ .Minor }}"
+      - "axiomhq/axiom-loki-multiplexer:{{ .Major }}.{{ .Minor }}.{{ .Patch }}"
+      - "axiomhq/axiom-loki-multiplexer:latest"

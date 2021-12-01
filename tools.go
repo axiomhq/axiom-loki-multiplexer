@@ -1,6 +1,6 @@
 //go:build tools
 
-package axiomlokiproxy
+package axiomlokimultiplexer
 
 import (
 	_ "github.com/golangci/golangci-lint/cmd/golangci-lint"
