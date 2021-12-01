@@ -1,4 +1,4 @@
-# Axiom Loki Proxy
+# Axiom Loki Multiplexer
 
 [![Go Workflow][go_workflow_badge]][go_workflow]
 [![Coverage Status][coverage_badge]][coverage]
@@ -18,7 +18,7 @@
 
 ## Introduction
 
-_Axiom Loki Proxy_ ships logs to Axiom, using [Loki HTTP API][1].
+Axiom Loki Multiplexer, multiplexes logs you send to Loki using [Loki HTTP API][1] to Axiom.
 
   [1]: https://grafana.com/docs/loki/latest/api/#post-lokiapiv1push
 
