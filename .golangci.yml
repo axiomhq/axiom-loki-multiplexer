@@ -41,6 +41,6 @@ linters-settings:
   gofmt:
     simplify: true
   goimports:
-    local-prefixes: github.com/axiomhq/axiom-loki-proxy
+    local-prefixes: github.com/axiomhq/axiom-loki-multiplexer
   govet:
     check-shadowing: true

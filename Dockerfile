@@ -8,13 +8,13 @@ RUN apk update --no-cache                 \
     && apk add --no-cache ca-certificates
 
 # Copy binary into image.
-COPY axiom-loki-proxy /usr/bin/axiom-loki-proxy
+COPY axiom-loki-multiplexer /usr/bin/axiom-loki-multiplexer
 
 # Use the project name as working directory.
-WORKDIR /axiom-loki-proxy
+WORKDIR /axiom-loki-multiplexer
 
 # Expose the default application port.
 EXPOSE 8080/tcp
 
 # Set the binary as entrypoint.
-ENTRYPOINT [ "/usr/bin/axiom-loki-proxy" ]
+ENTRYPOINT [ "/usr/bin/axiom-loki-multiplexer" ]

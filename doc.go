@@ -1,3 +1,3 @@
-// Package axiomlokiproxy implements a Grafana Loki proxy that pushes logs to
+// Package axiomlokimultiplexer implements a Grafana Loki multiplexer that pushes logs to
 // Axiom.
-package axiomlokiproxy
+package axiomlokimultiplexer

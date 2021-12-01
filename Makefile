@@ -100,7 +100,7 @@ fmt: ## Format and simplify the source code using `gofmt`
 	@! $(GOFMT) -s -w $(shell find . -path -prune -o -name '*.go' -print) | grep '^'
 
 .PHONY: install
-install: $(GOPATH)/bin/axiom-loki-proxy ## Install the binary into the $GOPATH/bin directory
+install: $(GOPATH)/bin/axiom-loki-multiplexer ## Install the binary into the $GOPATH/bin directory
 
 .PHONY: lint
 lint: $(GOLANGCI_LINT) ## Lint the source code
@@ -126,9 +126,9 @@ $(COVERPROFILE):
 
 # INSTALL TARGETS
 
-$(GOPATH)/bin/axiom-loki-proxy: dep.stamp $(call go-pkg-sourcefiles, ./...)
-	@echo ">> installing axiom-loki-proxy binary"
-	@$(GO_BIN_IN_PATH) install $(GOFLAGS) ./cmd/axiom-loki-proxy
+$(GOPATH)/bin/axiom-loki-multiplexer: dep.stamp $(call go-pkg-sourcefiles, ./...)
+	@echo ">> installing axiom-loki-multiplexer binary"
+	@$(GO_BIN_IN_PATH) install $(GOFLAGS) ./cmd/axiom-loki-multiplexer
 
 # GO TOOLS
 
