@@ -11,13 +11,13 @@ import (
 	pb "github.com/grafana/loki/pkg/logproto"
 )
 
-type stream struct {
+type Stream struct {
 	Entries []pb.Entry
 	Labels  loghttp.LabelSet
 }
 
-type pushRequest struct {
-	Streams []stream
+type PushRequest struct {
+	Streams []Stream
 }
 
 func convertLabelsString(str string) (map[string]string, error) {
@@ -32,7 +32,7 @@ func convertLabelsString(str string) (map[string]string, error) {
 	return labels, nil
 }
 
-func decodeProtoPushRequest(r io.Reader) (*pushRequest, error) {
+func DecodeProtoPushRequest(r io.Reader) (*PushRequest, error) {
 	var req pb.PushRequest
 
 	b, err := ioutil.ReadAll(r)
@@ -47,8 +47,8 @@ func decodeProtoPushRequest(r io.Reader) (*pushRequest, error) {
 		return nil, err
 	}
 
-	ret := &pushRequest{
-		Streams: make([]stream, len(req.Streams)),
+	ret := &PushRequest{
+		Streams: make([]Stream, len(req.Streams)),
 	}
 
 	for i, s := range req.Streams {
@@ -57,7 +57,7 @@ func decodeProtoPushRequest(r io.Reader) (*pushRequest, error) {
 			return nil, err
 		}
 
-		ret.Streams[i] = stream{
+		ret.Streams[i] = Stream{
 			Labels:  loghttp.LabelSet(labels),
 			Entries: s.Entries,
 		}
@@ -66,14 +66,14 @@ func decodeProtoPushRequest(r io.Reader) (*pushRequest, error) {
 	return ret, nil
 }
 
-func decodeJSONPushRequest(b io.Reader) (*pushRequest, error) {
+func DecodeJSONPushRequest(b io.Reader) (*PushRequest, error) {
 	var req loghttp.PushRequest
 	if err := json.NewDecoder(b).Decode(&req); err != nil {
 		return nil, err
 	}
 
-	ret := &pushRequest{
-		Streams: make([]stream, len(req.Streams)),
+	ret := &PushRequest{
+		Streams: make([]Stream, len(req.Streams)),
 	}
 
 	for i, s := range req.Streams {
@@ -83,8 +83,8 @@ func decodeJSONPushRequest(b io.Reader) (*pushRequest, error) {
 	return ret, nil
 }
 
-func newStream(s *loghttp.Stream) stream {
-	ret := stream{
+func newStream(s *loghttp.Stream) Stream {
+	ret := Stream{
 		Entries: make([]pb.Entry, len(s.Entries)),
 		Labels:  s.Labels,
 	}

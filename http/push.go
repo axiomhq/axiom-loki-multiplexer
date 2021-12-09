@@ -112,16 +112,16 @@ func (m *Multiplexer) multiplex(req *http.Request) error {
 	}
 
 	var (
-		ingestReq *pushRequest
+		ingestReq *PushRequest
 		err       error
 	)
 
 	typ := req.Header.Get("Content-Type")
 	switch typ {
 	case "application/json":
-		ingestReq, err = decodeJSONPushRequest(req.Body)
+		ingestReq, err = DecodeJSONPushRequest(req.Body)
 	case "application/x-protobuf":
-		ingestReq, err = decodeProtoPushRequest(req.Body)
+		ingestReq, err = DecodeProtoPushRequest(req.Body)
 	default:
 		err = fmt.Errorf("unsupported Content-Type %v", typ)
 	}
