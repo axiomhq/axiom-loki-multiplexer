@@ -117,7 +117,7 @@ release:
     owner: axiomhq
     name: axiom-loki-multiplexer
   prerelease: auto
-  name_template: "Axiom Loki multiplexer v{{ .Version }}"
+  name_template: "Axiom Loki Multiplexer v{{ .Version }}"
 
 brews:
   - name: axiom-loki-multiplexer
