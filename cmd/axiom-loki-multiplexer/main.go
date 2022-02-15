@@ -37,7 +37,7 @@ func run(ctx context.Context, log *zap.Logger, client *axiom.Client) error {
 		url = *lokiURL
 	}
 
-	mp, err := httpmultiplexer.NewMultiplexer(client.Datasets.IngestEvents, url, *defaultDataset, *datasetKey)
+	mp, err := httpmultiplexer.NewMultiplexer(log, client.Datasets.IngestEvents, url, *defaultDataset, *datasetKey)
 	if err != nil {
 		return cmd.Error("create multiplexer", err)
 	}

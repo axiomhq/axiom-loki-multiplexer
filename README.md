@@ -18,7 +18,7 @@
 
 ## Introduction
 
-Axiom Loki Multiplexer, multiplexes logs you send to Loki using [Loki HTTP API][1] to Axiom.
+_Axiom Loki Multiplexer_ multiplexes logs you send to Loki using [Loki HTTP API][1] to Axiom.
 
   [1]: https://grafana.com/docs/loki/latest/api/#post-lokiapiv1push
 
@@ -64,18 +64,19 @@ Docker images are available on [DockerHub][docker].
 
 ## Usage
 
-1. Set the following environment variables to connect to Axiom Cloud:
+1. Set the following environment variables to connect to **Axiom Cloud**:
 
-* `AXIOM_TOKEN`: **Personal Access** or **Ingest** token. Can be created under
-  `Profile` or `Settings > Ingest Tokens`. For security reasons it is advised to
-  use an Ingest Token with minimal privileges only.
-* `AXIOM_ORG_ID`: The organization identifier of the organization to use
+* `AXIOM_TOKEN`: **Personal Access** or **API** token. Can be created under
+  `Setting -> Profile` or `Settings -> API Tokens`. For security reasons it is
+  advised to use an API Token with minimal privileges only.
+* `AXIOM_ORG_ID`: The organization identifier of the organization to use (only
+  required when a **Personal Access** token is used).
 
-When using Axiom Selfhost:
+When using **Axiom Selfhost**:
 
-* `AXIOM_TOKEN`: **Personal Access** or **Ingest** token. Can be created under
-  `Profile` or `Settings > Ingest Tokens`. For security reasons it is advised to
-  use an Ingest Token with minimal privileges only.
+* `AXIOM_TOKEN`: **Personal Access** or **API** token. Can be created under
+  `Setting -> Profile` or `Settings -> API Tokens`. For security reasons it is
+  advised to use an API Token with minimal privileges only.
 * `AXIOM_URL`: URL of the Axiom deployment to use
 
 2. Run it: `./axiom-loki-multiplexer` or using Docker:

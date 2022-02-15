@@ -8,7 +8,6 @@ import (
 	"net/http"
 	"net/http/httputil"
 	"net/url"
-	"reflect"
 	"sync"
 
 	"github.com/axiomhq/axiom-go/axiom"
@@ -16,22 +15,6 @@ import (
 )
 
 type ingestFunc func(ctx context.Context, id string, opts axiom.IngestOptions, events ...axiom.Event) (*axiom.IngestStatus, error)
-
-var logger *zap.Logger
-
-func init() {
-	var err error
-	logger, err = zap.NewProduction()
-	if err != nil {
-		panic(err)
-	}
-
-	// type check on axiom.Event incase it's ever not a map[string]interface{}
-	// so we can use unsafe.Pointer for a quick type conversion instead of allocating a new slice
-	if !reflect.TypeOf(axiom.Event{}).ConvertibleTo(reflect.TypeOf(map[string]interface{}{})) {
-		panic("axiom.Event is not a map[string]interface{}, please contact support")
-	}
-}
 
 type lokiServer struct {
 	multiplexer *httputil.ReverseProxy
@@ -46,18 +29,21 @@ func (lk *lokiServer) Scheme() string {
 	return lk.URL.Scheme
 }
 
-// Multiplexer implements http.Handler.
+// Multiplexer implements `http.Handler`.
 type Multiplexer struct {
 	sync.Mutex
+
 	defaultDataset string
 	datasetKey     string
-	lokiServer     *lokiServer
-	ingestFn       ingestFunc
+
+	logger     *zap.Logger
+	lokiServer *lokiServer
+	ingestFn   ingestFunc
 }
 
 // NewMultiplexer creates a new Multiplexer which uses the passed Axiom client
 // to send logs to Axiom.
-func NewMultiplexer(ingestFn ingestFunc, lokiEndpoint, defaultDataset, datasetKey string) (*Multiplexer, error) {
+func NewMultiplexer(logger *zap.Logger, ingestFn ingestFunc, lokiEndpoint, defaultDataset, datasetKey string) (*Multiplexer, error) {
 	var lk *lokiServer
 	if lokiEndpoint != "" {
 		hcURL, err := url.Parse(lokiEndpoint)
@@ -68,6 +54,7 @@ func NewMultiplexer(ingestFn ingestFunc, lokiEndpoint, defaultDataset, datasetKe
 		lk = &lokiServer{multiplexer: multiplexer, URL: hcURL}
 	}
 	return &Multiplexer{
+		logger:         logger,
 		ingestFn:       ingestFn,
 		lokiServer:     lk,
 		defaultDataset: defaultDataset,
@@ -75,6 +62,7 @@ func NewMultiplexer(ingestFn ingestFunc, lokiEndpoint, defaultDataset, datasetKe
 	}, nil
 }
 
+// ServeHTTP implements `http.Handler`.
 func (m *Multiplexer) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
 	if m.lokiServer != nil {
 		body := bytes.NewBuffer(nil)
@@ -84,17 +72,17 @@ func (m *Multiplexer) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
 	}
 
 	if err := m.multiplex(req); err != nil {
-		logger.Error(err.Error())
+		m.logger.Error(err.Error())
 		if m.lokiServer == nil {
 			if _, wErr := resp.Write([]byte(err.Error())); wErr != nil {
-				logger.Error(wErr.Error())
+				m.logger.Error(wErr.Error())
 			}
 		}
 	}
 
 	if m.lokiServer == nil {
 		if _, wErr := resp.Write([]byte("{}")); wErr != nil {
-			logger.Error(wErr.Error())
+			m.logger.Error(wErr.Error())
 		}
 	}
 }
@@ -106,8 +94,7 @@ func (m *Multiplexer) forward(resp http.ResponseWriter, req *http.Request) {
 }
 
 func (m *Multiplexer) multiplex(req *http.Request) error {
-	defer req.Body.Close()
-	if req.Method != "POST" {
+	if req.Method != http.MethodPost {
 		return nil
 	}
 
@@ -127,7 +114,7 @@ func (m *Multiplexer) multiplex(req *http.Request) error {
 	}
 
 	if err != nil {
-		logger.Error(err.Error())
+		m.logger.Error(err.Error())
 		return err
 	}
 
@@ -153,8 +140,8 @@ func (m *Multiplexer) multiplex(req *http.Request) error {
 			events = append(events, ev)
 		}
 
-		if _, err := m.ingestFn(context.Background(), dataset, axiom.IngestOptions{}, events...); err != nil {
-			logger.Error(err.Error())
+		if _, err := m.ingestFn(req.Context(), dataset, axiom.IngestOptions{}, events...); err != nil {
+			m.logger.Error(err.Error())
 			return err
 		}
 		events = make([]axiom.Event, 0)
