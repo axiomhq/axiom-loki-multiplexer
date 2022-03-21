@@ -8,7 +8,7 @@ require (
 	github.com/golang/snappy v0.0.4
 	github.com/golangci/golangci-lint v1.44.0
 	github.com/goreleaser/goreleaser v1.5.0
-	github.com/grafana/loki v1.6.2-0.20211108122114-f61a4d2612d8
+	github.com/grafana/loki v1.6.2-0.20220112164614-525040a32657
 	github.com/stretchr/testify v1.7.0
 	go.uber.org/zap v1.21.0
 	gotest.tools/gotestsum v1.7.0
